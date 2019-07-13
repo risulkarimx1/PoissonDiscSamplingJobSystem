@@ -9,7 +9,8 @@ public class PoissonDiscSampler
     private readonly Rect rect;
     private readonly float radius;  // radius squared
     private readonly float cellSize;
-    private Vector2[,] grid;
+    //private Vector2[,] grid;
+    private Grid grid;
     private List<Vector2> activeSamples = new List<Vector2>();
 
     /// Create a sampler with the following parameters:
@@ -22,8 +23,10 @@ public class PoissonDiscSampler
         rect = new Rect(0, 0, width, height);
         this.radius = radius;
         cellSize = radius / Mathf.Sqrt(2);
-        grid = new Vector2[Mathf.CeilToInt(width / cellSize),
-                           Mathf.CeilToInt(height / cellSize)];
+        //grid = new Vector2[Mathf.CeilToInt(width / cellSize),
+        //                   Mathf.CeilToInt(height / cellSize)];
+        grid = new Grid(Mathf.CeilToInt(width / cellSize),
+            Mathf.CeilToInt(height / cellSize));
     }
 
     /// Return a lazy sequence of samples. You typically want to call this in a foreach loop, like so:
@@ -76,14 +79,17 @@ public class PoissonDiscSampler
 
         int xmin = Mathf.Max(pos.x - 2, 0);
         int ymin = Mathf.Max(pos.y - 2, 0);
-        int xmax = Mathf.Min(pos.x + 2, grid.GetLength(0) - 1);
-        int ymax = Mathf.Min(pos.y + 2, grid.GetLength(1) - 1);
+        //int xmax = Mathf.Min(pos.x + 2, grid.GetLength(0) - 1);
+        //int ymax = Mathf.Min(pos.y + 2, grid.GetLength(1) - 1);
+
+        int xmax = Mathf.Min(pos.x + 2, grid.Width - 1);
+        int ymax = Mathf.Min(pos.y + 2, grid.Height- 1);
 
         for (int y = ymin; y <= ymax; y++)
         {
             for (int x = xmin; x <= xmax; x++)
             {
-                Vector2 s = grid[x, y];
+                Vector2 s = grid.GetValue(x, y);
                 if (s != Vector2.zero)
                 {
                     var d = (s - sample).magnitude;
@@ -105,7 +111,8 @@ public class PoissonDiscSampler
     {
         activeSamples.Add(sample);
         GridPos pos = new GridPos(sample, cellSize);
-        grid[pos.x, pos.y] = sample;
+        //grid[pos.x, pos.y] = sample;
+        grid.AddValue(pos.x, pos.y,sample);
         return sample;
     }
 

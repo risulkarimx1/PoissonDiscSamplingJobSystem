@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Numerics;
+using UnityEngine;
 
 [Serializable]
 public class Grid
@@ -7,9 +7,9 @@ public class Grid
     public int Width;
     public int Height;
 
-    public Vector2[] Values;
+    private Vector2[] Values;
 
-    public void CreateGrid(int width, int height)
+    public Grid(int width, int height)
     {
         Width = width;
         Height = height;
@@ -27,7 +27,6 @@ public class Grid
     }
     public Vector2 GetValue(int col, int row)
     {
-
         return Values[GetIndex(col, row)];
     }
     public Vector2 GetValue(float col, float row)
