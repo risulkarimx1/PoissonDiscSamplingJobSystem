@@ -2,18 +2,16 @@
 using UnityEngine;
 
 [Serializable]
-public struct Grid
+public struct LinearGrid
 {
-    public int Width { get; private set; }
-    public int Height { get; private set; }
+    public int Width;
+    public int Height;
 
     private Vector2[] _values;
 
-    public Grid(int width, int height)
+    public void CreateGrid()
     {
-        Width = width;
-        Height = height;
-        _values = new Vector2[width * height];
+        _values = new Vector2[Width * Height];
     }
 
     public void AddValue(int col, int row, Vector2 Value)
@@ -28,9 +26,5 @@ public struct Grid
     public Vector2 GetValue(int col, int row)
     {
         return _values[GetIndex(col, row)];
-    }
-    public Vector2 GetValue(float col, float row)
-    {
-        return GetValue((int)col, (int)row);
     }
 }

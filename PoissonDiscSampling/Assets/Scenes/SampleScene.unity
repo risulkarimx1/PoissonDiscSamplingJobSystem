@@ -165,7 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Width: 30
   Height: 100
-  Radius: 0.5
+  Radius: 0.1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

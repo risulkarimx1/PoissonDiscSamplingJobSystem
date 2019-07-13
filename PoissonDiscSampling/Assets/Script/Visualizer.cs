@@ -5,10 +5,11 @@ using UnityEngine;
 public class Visualizer : MonoBehaviour
 {
     public float Width;
-
     public float Height;
-
     public float Radius;
+
+    [Range(0,1)]
+    public float sphereSize;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,7 +18,7 @@ public class Visualizer : MonoBehaviour
         {
             var sampleSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sampleSphere.transform.position = new Vector3(sample.x,0,sample.y);
-            sampleSphere.transform.localScale = new Vector3(.25f,.25f,.25f);
+            sampleSphere.transform.localScale = Vector3.one*sphereSize;
         }
     }
 }
