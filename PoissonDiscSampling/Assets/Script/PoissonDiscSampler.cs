@@ -9,7 +9,6 @@ public class PoissonDiscSampler
     private readonly Rect rect;
     private readonly float radius;  // radius squared
     private readonly float cellSize;
-    //private Vector2[,] grid;
     private Grid grid;
     private List<Vector2> activeSamples = new List<Vector2>();
 
@@ -23,8 +22,6 @@ public class PoissonDiscSampler
         rect = new Rect(0, 0, width, height);
         this.radius = radius;
         cellSize = radius / Mathf.Sqrt(2);
-        //grid = new Vector2[Mathf.CeilToInt(width / cellSize),
-        //                   Mathf.CeilToInt(height / cellSize)];
         grid = new Grid(Mathf.CeilToInt(width / cellSize),
             Mathf.CeilToInt(height / cellSize));
     }
@@ -75,12 +72,10 @@ public class PoissonDiscSampler
 
     private bool IsFarEnough(Vector2 sample)
     {
-        GridPos pos = new GridPos(sample, cellSize);
+        var pos = getGridPosition(sample);
 
         int xmin = Mathf.Max(pos.x - 2, 0);
         int ymin = Mathf.Max(pos.y - 2, 0);
-        //int xmax = Mathf.Min(pos.x + 2, grid.GetLength(0) - 1);
-        //int ymax = Mathf.Min(pos.y + 2, grid.GetLength(1) - 1);
 
         int xmax = Mathf.Min(pos.x + 2, grid.Width - 1);
         int ymax = Mathf.Min(pos.y + 2, grid.Height- 1);
@@ -110,22 +105,16 @@ public class PoissonDiscSampler
     private Vector2 AddSample(Vector2 sample)
     {
         activeSamples.Add(sample);
-        GridPos pos = new GridPos(sample, cellSize);
+        var pos = getGridPosition(sample);
         //grid[pos.x, pos.y] = sample;
         grid.AddValue(pos.x, pos.y,sample);
         return sample;
     }
 
-    /// Helper struct to calculate the x and y indices of a sample in the grid
-    private struct GridPos
+    private Vector2Int getGridPosition(Vector2 sample)
     {
-        public int x;
-        public int y;
-
-        public GridPos(Vector2 sample, float cellSize)
-        {
-            x = (int)(sample.x / cellSize);
-            y = (int)(sample.y / cellSize);
-        }
+        var x = (int)(sample.x / cellSize);
+        var y = (int)(sample.y / cellSize);
+        return new Vector2Int(x,y);
     }
 }
