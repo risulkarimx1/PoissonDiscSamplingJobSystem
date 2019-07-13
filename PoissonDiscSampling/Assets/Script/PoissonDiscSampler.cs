@@ -5,10 +5,12 @@ using Random = UnityEngine.Random;
 public class PoissonDiscSampler
 {
     private const int k = 30;  // Maximum number of attempts before marking a sample as inactive.
-
     private readonly Rect rect;
-    private readonly float radius;  // radius squared
-    private readonly float cellSize;
+    private readonly float _radius; 
+    private readonly float _width;
+    private readonly float _height;
+
+    private readonly float _cellSize;
     private Grid grid;
     private List<Vector2> activeSamples = new List<Vector2>();
 
@@ -20,10 +22,12 @@ public class PoissonDiscSampler
     public PoissonDiscSampler(float width, float height, float radius)
     {
         rect = new Rect(0, 0, width, height);
-        this.radius = radius;
-        cellSize = radius / Mathf.Sqrt(2);
-        grid = new Grid(Mathf.CeilToInt(width / cellSize),
-            Mathf.CeilToInt(height / cellSize));
+        _radius = radius;
+        _cellSize = radius / Mathf.Sqrt(2);
+        _height = height;
+        _width = width;
+        grid = new Grid(Mathf.CeilToInt(width / _cellSize),
+            Mathf.CeilToInt(height / _cellSize));
     }
 
     /// Return a lazy sequence of samples. You typically want to call this in a foreach loop, like so:
@@ -47,7 +51,7 @@ public class PoissonDiscSampler
             {
                 var randomDirection = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
                 
-                var randomMagnitude = Random.Range(radius*1.0f, radius * 2.0f);
+                var randomMagnitude = Random.Range(_radius, _radius * 2);
                 var offset = randomDirection * randomMagnitude;
                 var candidate = sample + offset;
 
@@ -88,7 +92,7 @@ public class PoissonDiscSampler
                 if (s != Vector2.zero)
                 {
                     var d = (s - sample).magnitude;
-                    if (d< (radius))
+                    if (d< (_radius))
                         return false;
                 }
             }
@@ -113,8 +117,8 @@ public class PoissonDiscSampler
 
     private Vector2Int getGridPosition(Vector2 sample)
     {
-        var x = (int)(sample.x / cellSize);
-        var y = (int)(sample.y / cellSize);
+        var x = (int)(sample.x / _cellSize);
+        var y = (int)(sample.y / _cellSize);
         return new Vector2Int(x,y);
     }
 }
