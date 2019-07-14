@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class Visualizer : MonoBehaviour
 {
-    [SerializeField] private float _width;
-    [SerializeField] private float _height;
+    public Transform V0, V1, V2, V3;
+
+     private float _width;
+    private float _height;
     [SerializeField] private float _radius;
 
     [Range(0,1)]
@@ -16,6 +18,17 @@ public class Visualizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        var areaMeasurement = new AreaMeasurement()
+        {
+            V0 = this.V0,
+            V1 = this.V1,
+            V2 = this.V2,
+            V3 = this.V3
+        };
+        var measure = areaMeasurement.Measure();
+        _width = measure.x;
+        _height = measure.y;
+
         var activeSamples = new NativeList<float2>(Allocator.TempJob);
         var results = new NativeList<float2>(Allocator.TempJob);
 
