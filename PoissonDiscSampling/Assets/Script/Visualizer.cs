@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 public class Visualizer : MonoBehaviour
 {
@@ -13,8 +12,11 @@ public class Visualizer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        var poissonDiscSampler = new PoissonDiscSampler(Width,Height,Radius);
-        foreach (var sample in poissonDiscSampler.Samples())
+        var rand = new Random(1);
+        var poissonDiscSampler = new PoissonDiscSampler(Width,Height,Radius,rand);
+        poissonDiscSampler.CreateSamples();
+        var output = poissonDiscSampler.Output;
+        foreach (var sample in output)
         {
             var sampleSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sampleSphere.transform.position = new Vector3(sample.x,0,sample.y);
