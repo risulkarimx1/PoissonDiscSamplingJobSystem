@@ -163,10 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 116655b0f8f731941a24c904cca60bee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 10
-  Height: 35
-  Radius: 0.25
-  sphereSize: 0.1
+  _width: 10
+  _height: 20
+  _radius: 0.25
+  sphereSize: 0.5
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

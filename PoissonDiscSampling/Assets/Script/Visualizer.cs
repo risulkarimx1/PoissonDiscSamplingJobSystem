@@ -1,19 +1,29 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
 public class Visualizer : MonoBehaviour
 {
-    public float Width;
-    public float Height;
-    public float Radius;
+    public float _width;
+    public float _height;
+    public float _radius;
 
     [Range(0,1)]
     public float sphereSize;
     // Start is called before the first frame update
     void Start()
     {
-        var rand = new Random(1);
-        var poissonDiscSampler = new PoissonDiscSampler(Width,Height,Radius,rand);
+        //var poissonDiscSampler = new PoissonDiscSampler(_width,_height,_radius,rand);
+        var poissonDiscSampler = new PoissonDiscSampler()
+        {
+            Width =  _width,
+            Height = _height,
+            Radius =  _radius,
+            CellSize =  _radius / math.sqrt(2),
+            Output = new List<float2>(),
+            ActiveSamples = new List<float2>()
+        };
         poissonDiscSampler.CreateSamples();
         var output = poissonDiscSampler.Output;
         foreach (var sample in output)

@@ -1,61 +1,50 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.Mathematics;
 using Random = Unity.Mathematics.Random;
-public class PoissonDiscSampler
+public struct PoissonDiscSampler
 {
     private const int k = 30;  // Maximum number of attempts before marking a sample as inactive.
-    private readonly float _radius; 
-    private readonly float _width;
-    private readonly float _height;
 
-    private float _cellSize;
-    private LinearGrid _linearGrid;
-    private List<float2> _activeSamples;
-
+    public float Radius; 
+    public float Width;
+    public float Height;
+    public float CellSize;
+    
+    public List<float2> ActiveSamples;
     public List<float2> Output;
-    private Random _random;
 
-    public PoissonDiscSampler(float width, float height, float radius,Random random)
-    {
-        //_rect = new Rect(0, 0, width, height);
-        _radius = radius;
-        _cellSize = radius / math.sqrt(2);
-        _height = height;
-        _width = width;
-        _random = random;
-        _linearGrid = new LinearGrid()
-        {
-            Width = (int) math.ceil(width / _cellSize),
-            Height = (int) math.ceil(height / _cellSize)
-        };
-
-        _linearGrid.CreateGrid();
-        _activeSamples = new List<float2>();
-        Output = new List<float2>();
-        
-    }
+    private LinearGrid _linearGrid;
 
     public void CreateSamples()
     {
+        var random= new Random(1);
+
+        _linearGrid = new LinearGrid()
+        {
+            Width = (int)math.ceil(Width / CellSize),
+            Height = (int)math.ceil(Height / CellSize)
+        };
+
+        _linearGrid.CreateGrid();
+
         // First sample is chosen randomly
-        var firstSample = new float2(_random.NextFloat()* _width, _random.NextFloat() * _height);
+        var firstSample = new float2(random.NextFloat()* Width, random.NextFloat() * Height);
         AddSample(firstSample);
 
-        while (_activeSamples.Count > 0)
+        while (ActiveSamples.Count > 0)
         {
 
-            // Pick a _random active sample
-            var index = (int)_random.NextFloat() * _activeSamples.Count;
-            var sample = _activeSamples[index];
+            // Pick a Random active sample
+            var index = (int)random.NextFloat() * ActiveSamples.Count;
+            var sample = ActiveSamples[index];
 
-            // Try `k` _random candidates between [radius, 2 * radius] from that sample.
+            // Try `k` Random candidates between [radius, 2 * radius] from that sample.
             bool found = false;
             for (int j = 0; j < k; ++j)
             {
-                var randomDirection = new float2(_random.NextFloat(-1.0f, 1.0f), _random.NextFloat(-1.0f, 1.0f));
+                var randomDirection = new float2(random.NextFloat(-1.0f, 1.0f), random.NextFloat(-1.0f, 1.0f));
                 
-                var randomMagnitude = _random.NextFloat(_radius, _radius * 2);
+                var randomMagnitude = random.NextFloat(Radius, Radius * 2);
                 var offset = randomDirection * randomMagnitude;
                 var candidate = sample + offset;
 
@@ -73,8 +62,8 @@ public class PoissonDiscSampler
             // If we couldn't find a valid candidate after k attempts, remove this sample from the active samples queue
             if (!found)
             {
-                _activeSamples[index] = _activeSamples[_activeSamples.Count - 1];
-                _activeSamples.RemoveAt(_activeSamples.Count - 1);
+                ActiveSamples[index] = ActiveSamples[ActiveSamples.Count - 1];
+                ActiveSamples.RemoveAt(ActiveSamples.Count - 1);
             }
         }
     }
@@ -97,7 +86,7 @@ public class PoissonDiscSampler
                 if (s.x != float.MinValue)
                 {
                     
-                    if (Distance(s, sample) < (_radius))
+                    if (Distance(s, sample) < (Radius))
                         return false;
                 }
             }
@@ -109,7 +98,7 @@ public class PoissonDiscSampler
     /// Adds the sample to the active samples queue and the _linearGrid 
     private void AddSample(float2 sample)
     {
-        _activeSamples.Add(sample);
+        ActiveSamples.Add(sample);
         var pos = GetGridPosition(sample);
         _linearGrid.AddValue(pos.x, pos.y,sample);
         Output.Add(sample);
@@ -117,16 +106,16 @@ public class PoissonDiscSampler
 
     private int2 GetGridPosition(float2 sample)
     {
-        var x = (int)(sample.x / _cellSize);
-        var y = (int)(sample.y / _cellSize);
+        var x = (int)(sample.x / CellSize);
+        var y = (int)(sample.y / CellSize);
         return new int2(x,y);
     }
 
     private bool Contains(float2 candidate)
     {
-        return (candidate.x >= 0 && candidate.x < _width
+        return (candidate.x >= 0 && candidate.x < Width
               &&
-              candidate.y >= 0 && candidate.y < _height);
+              candidate.y >= 0 && candidate.y < Height);
     }
 
     private float Distance(float2 a, float2 b)
