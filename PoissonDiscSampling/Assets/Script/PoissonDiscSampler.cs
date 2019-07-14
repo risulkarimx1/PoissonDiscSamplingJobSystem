@@ -15,10 +15,14 @@ public struct PoissonDiscSampler:IJob
 
     public int GridWidth;
     public int GridHeight;
+
     public NativeArray<float2> GridArray;
 
     public NativeList<float2> ActiveSamples;
     public NativeList<float2> Result;
+
+    // Origin and angle
+    public float2 Origin;
 
     public void Execute()
     {
@@ -95,7 +99,7 @@ public struct PoissonDiscSampler:IJob
         ActiveSamples.Add(sample);
         var pos = GetGridPosition(sample);
         AddValueToGrid(pos.x, pos.y,sample);
-        Result.Add(sample);
+        Result.Add(Origin+sample);
     }
 
     private int2 GetGridPosition(float2 sample)

@@ -56,6 +56,9 @@ public class Visualizer : MonoBehaviour
             GridHeight = gridHeight,
             GridArray = gridArray,
 
+            // Origin and angle
+            Origin = new float2(V0.position.x,V0.position.z),
+
             // Sample and Results
             ActiveSamples = activeSamples,
             Result = results
