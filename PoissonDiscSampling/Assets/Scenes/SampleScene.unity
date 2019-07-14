@@ -164,9 +164,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _width: 10
-  _height: 20
-  _radius: 0.25
-  sphereSize: 0.5
+  _height: 15
+  _radius: 0.1
+  _sphereSize: 0.05
+  _randomSeed: 2
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

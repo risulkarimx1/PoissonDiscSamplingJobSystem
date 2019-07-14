@@ -1,36 +1,64 @@
-﻿using System.Collections.Generic;
+﻿using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
-using Random = Unity.Mathematics.Random;
 
 public class Visualizer : MonoBehaviour
 {
-    public float _width;
-    public float _height;
-    public float _radius;
+    [SerializeField] private float _width;
+    [SerializeField] private float _height;
+    [SerializeField] private float _radius;
 
     [Range(0,1)]
-    public float sphereSize;
+    [SerializeField] private float _sphereSize;
+
+    [SerializeField] private uint _randomSeed;
     // Start is called before the first frame update
     void Start()
     {
-        //var poissonDiscSampler = new PoissonDiscSampler(_width,_height,_radius,rand);
+        var activeSamples = new NativeList<float2>(Allocator.TempJob);
+        var results = new NativeList<float2>(Allocator.TempJob);
+
+        var cellSize = _radius / math.sqrt(2);
+
+        var gridWidth = (int) math.ceil(_width / cellSize);
+        var gridHeight = (int)math.ceil(_height/ cellSize);
+
+        var gridArray = new NativeArray<float2>(gridWidth * gridHeight, Allocator.TempJob);
+        for (var i = 0; i < gridArray.Length; i++)
+        {
+            gridArray[i]= new float2(float.MinValue, float.MinValue);
+        }
+
         var poissonDiscSampler = new PoissonDiscSampler()
         {
+            // Area Parameters
             Width =  _width,
             Height = _height,
             Radius =  _radius,
-            CellSize =  _radius / math.sqrt(2),
-            Output = new List<float2>(),
-            ActiveSamples = new List<float2>()
+            CellSize =  cellSize,
+            RandomSeed = _randomSeed,
+            // Grid Parameters
+            GridWidth = gridWidth,
+            GridHeight = gridHeight,
+            GridArray = gridArray,
+
+            // Sample and Results
+            ActiveSamples = activeSamples,
+            Result = results
         };
-        poissonDiscSampler.CreateSamples();
-        var output = poissonDiscSampler.Output;
-        foreach (var sample in output)
+
+        var handle = poissonDiscSampler.Schedule();
+        handle.Complete();
+        Debug.Log($"Length of result is: {results.Length}");
+        for (int i =0;i<results.Length;i++)
         {
             var sampleSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sampleSphere.transform.position = new Vector3(sample.x,0,sample.y);
-            sampleSphere.transform.localScale = Vector3.one*sphereSize;
+            sampleSphere.transform.position = new Vector3(results[i].x, 0, results[i].y);
+            sampleSphere.transform.localScale = Vector3.one * _sphereSize;
         }
+        activeSamples.Dispose();
+        results.Dispose();
+        gridArray.Dispose();
     }
 }
