@@ -15,11 +15,7 @@ public class PoissonDiscSampler
 
     public List<float2> Output;
     private Random _random;
-    /// Create a sampler with the following parameters:
-    ///
-    /// width:  each sample's x coordinate will be between [0, width]
-    /// height: each sample's y coordinate will be between [0, height]
-    /// radius: each sample will be at least `radius` units away from any other sample, and at most 2 * `radius`.
+
     public PoissonDiscSampler(float width, float height, float radius,Random random)
     {
         //_rect = new Rect(0, 0, width, height);
@@ -40,8 +36,6 @@ public class PoissonDiscSampler
         
     }
 
-    /// Return a lazy sequence of samples. You typically want to call this in a foreach loop, like so:
-    ///   foreach (Vector2 sample in sampler.CreateSamples()) { ... }
     public void CreateSamples()
     {
         // First sample is chosen randomly
@@ -110,13 +104,9 @@ public class PoissonDiscSampler
         }
 
         return true;
-
-        // Note: we use the zero vector to denote an unfilled cell in the _linearGrid. This means that if we were
-        // to randomly pick (0, 0) as a sample, it would be ignored for the purposes of proximity-testing
-        // and we might end up with another sample too close from (0, 0). This is a very minor issue.
     }
 
-    /// Adds the sample to the active samples queue and the _linearGrid before returning it
+    /// Adds the sample to the active samples queue and the _linearGrid 
     private void AddSample(float2 sample)
     {
         _activeSamples.Add(sample);
