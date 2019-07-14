@@ -1,7 +1,5 @@
 ﻿using System;
 using Unity.Mathematics;
-using UnityEngine;
-using UnityEngine.Assertions.Comparers;
 
 [Serializable]
 public struct LinearGrid
@@ -20,7 +18,7 @@ public struct LinearGrid
         }
     }
 
-    public void AddValue(int col, int row, Vector2 Value)
+    public void AddValue(int col, int row, float2 Value)
     {
         var index = GetIndex(col, row);
         _values[index] = Value;

@@ -8,7 +8,8 @@ public class PoissonDiscSampler
     private readonly float _radius; 
     private readonly float _width;
     private readonly float _height;
-    private readonly float _cellSize;
+
+    private float _cellSize;
     private LinearGrid _linearGrid;
     private List<float2> _activeSamples;
 
@@ -88,11 +89,11 @@ public class PoissonDiscSampler
     {
         var pos = GetGridPosition(sample);
 
-        int xmin = Mathf.Max(pos.x - 2, 0);
-        int ymin = Mathf.Max(pos.y - 2, 0);
+        int xmin = math.max(pos.x - 2, 0);
+        int ymin = math.max(pos.y - 2, 0);
 
-        int xmax = Mathf.Min(pos.x + 2, _linearGrid.Width - 1);
-        int ymax = Mathf.Min(pos.y + 2, _linearGrid.Height- 1);
+        int xmax = math.min(pos.x + 2, _linearGrid.Width - 1);
+        int ymax = math.min(pos.y + 2, _linearGrid.Height- 1);
 
         for (int y = ymin; y <= ymax; y++)
         {
@@ -116,7 +117,7 @@ public class PoissonDiscSampler
     }
 
     /// Adds the sample to the active samples queue and the _linearGrid before returning it
-    private void AddSample(Vector2 sample)
+    private void AddSample(float2 sample)
     {
         _activeSamples.Add(sample);
         var pos = GetGridPosition(sample);
@@ -124,14 +125,14 @@ public class PoissonDiscSampler
         Output.Add(sample);
     }
 
-    private Vector2Int GetGridPosition(Vector2 sample)
+    private int2 GetGridPosition(float2 sample)
     {
         var x = (int)(sample.x / _cellSize);
         var y = (int)(sample.y / _cellSize);
-        return new Vector2Int(x,y);
+        return new int2(x,y);
     }
 
-    private bool Contains(Vector2 candidate)
+    private bool Contains(float2 candidate)
     {
         return (candidate.x >= 0 && candidate.x < _width
               &&
